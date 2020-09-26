@@ -1,9 +1,28 @@
 //Initialize Bot and login
 require('dotenv').config();
 const Discord = require('discord.js');
+const mysql = require('mysql');
+
 const bot = new Discord.Client();
 const TOKEN = process.env.TOKEN;
+const MYSQLHOST = process.env.MYSQLHOST;
+const MYSQLUSER = process.env.MYSQLUSER;
+const MYSQLPASS = process.env.MYSQLPASS;
+const MYSQLDATABASE = process.env.MYSQLDATABASE;
+
 bot.login(TOKEN);
+
+var con = mysql.createConnection({
+     host: MYSQLHOST,
+     user: MYSQLUSER,
+     password: MYSQLPASS,
+     database: MYSQLDATABASE
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected to Database!");
+});
 
 bot.on('ready', () => {
   	console.info(`Logged in as ${bot.user.tag}!`);
@@ -20,31 +39,64 @@ bot.on('message', msg => {
 		msg.channel.send(usage());
 	}
      else if (msg.content === '!add') {
-          var sql = "INSERT INTO user (name, channel, role, quote) VALUES ('"+msg.member.user.tag+"', '"+msg.channel.name+"', 'admin', 'super fancy quote')";
-          con.query(sql, function (err, result) {
-            if (err) throw err;
-            console.log("Quote Added");
-            msg.reply("Your Quote has been added!");
-          });
+          if (checkUser(msg))
+          {
+               addQuote(msg);
+          }
      }
-});
-
-var mysql = require('mysql');
-
-var con = mysql.createConnection({
-     host: "localhost",
-     user: "root",
-     password: "pass",
-     database: "discord"
-});
-
-con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
 });
 
 
 //Functions
+function checkUser(msg)
+{
+     var user = msg.member.user.id;
+     var sql = "SELECT * FROM user WHERE user_id = "+msg.member.user.id+";";
+
+     con.query(sql, function (err, result) {
+          if (err)
+          {
+               console.log("Error in DB Checking User");
+               return false;
+          }
+          else
+          {
+               if(result.length)
+               {
+                    console.log("User already in db");
+                    return true;
+               }
+               else
+               {
+                    if(addUser(msg))
+                    {
+                       return true;
+                    }
+               }
+          }
+          return false;
+     });
+}
+
+function addUser(msg)
+{
+     var id = msg.member.user.id;
+     var user = msg.member.user.username;
+     var sql = "INSERT INTO user (user_id, name) VALUES ('"+id+"','"+user+"')";
+     con.query(sql, function (err, result) {
+          if (err)
+          {
+               console.log("Error in DB Adding User");
+               return false;
+          }
+          else
+          {
+               console.log("User Added to DB!")
+               return true;
+          }
+     });
+}
+
 function usage()
 {
 	return "!quote\t:\tfind a random quote \n\n!quote<user>\t:\tfind a random quote from a specific user\n\n!quote<user><search>\t:\tsearch for a specific quote";
