@@ -51,7 +51,7 @@ bot.on('message', msg => {
 function checkUser(msg)
 {
      var user = msg.member.user.id;
-     var sql = "SELECT * FROM user WHERE user_id = "+msg.member.user.id+";";
+     var sql = "SELECT * FROM user WHERE user_id = "+msg.member.user.id+" limit 1;";
 
      con.query(sql, function (err, result) {
           if (err)
@@ -63,7 +63,16 @@ function checkUser(msg)
           {
                if(result.length)
                {
-                    console.log("User already in db");
+                    console.log(msg.member.user.tag+" already in db");
+                    sql = "UPDATE user SET no_of_quotes = no_of_quotes + 1 WHERE user_id LIKE '"+msg.member.user.id+"' ";
+                    con.query(sql, function (error, row){
+                         if (error)
+                         {
+                              console.log("Error adding quote to user");
+                              return false;
+                         }
+
+                    })
                     return true;
                }
                else
@@ -91,10 +100,15 @@ function addUser(msg)
           }
           else
           {
-               console.log("User Added to DB!")
+               console.log(msg.member.user.tag+" Added to DB!")
                return true;
           }
      });
+}
+
+function addQuote(msg, msgInfo)
+{
+
 }
 
 function usage()
