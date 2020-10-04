@@ -1,6 +1,10 @@
 //Initialize Bot and login
 require('dotenv').config();
+
+// Database stuff
 databse = require('./lib/database')
+User = database.userModel;
+Quote = database.quoteModel;
 
 const Discord = require('discord.js');
 const mysql = require('mysql');
