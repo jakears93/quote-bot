@@ -1,28 +1,13 @@
 //Initialize Bot and login
 require('dotenv').config();
+databse = require('./lib/database')
+
 const Discord = require('discord.js');
 const mysql = require('mysql');
 
 const bot = new Discord.Client();
 const TOKEN = process.env.TOKEN;
-const MYSQLHOST = process.env.MYSQLHOST;
-const MYSQLUSER = process.env.MYSQLUSER;
-const MYSQLPASS = process.env.MYSQLPASS;
-const MYSQLDATABASE = process.env.MYSQLDATABASE;
-
 bot.login(TOKEN);
-
-var con = mysql.createConnection({
-     host: MYSQLHOST,
-     user: MYSQLUSER,
-     password: MYSQLPASS,
-     database: MYSQLDATABASE
-});
-
-con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected to Database!");
-});
 
 bot.on('ready', () => {
   	console.log(`Logged in as ${bot.user.tag}!`);
