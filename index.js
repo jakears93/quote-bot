@@ -21,10 +21,7 @@ bot.on('message', msg => {
      switch(command){
           case "!add":
                console.log("Current Command: "+command);
-               if(checkUser(msg))
-               {
-                    addQuote(msg);
-               }
+               addQuoteV2(msg)
                break;
 
           case "!quote":
@@ -195,4 +192,63 @@ function findQuote(user, partialMsg)	//searches through db for a specific quote 
 function topQuote()			//returns the highest ranking quote
 {
 
+};
+
+// Tox versions with promises
+checkUserV2 = function(name) {
+  var user;
+  // Query is a promise, so handle result in then
+  return user = User.findOne({
+    name: name
+  }).then((usr) => {
+    if (usr === null) {
+      // Create is a promise, so define the ultimate return value, and return a Promise for that value
+      return User.create({
+        name: name
+      }).then((new_usr) => {
+        return new_usr;
+      });
+    } else {
+      // Yeah, always returning promises
+      return usr;
+    }
+  }).catch(console.error); // Send errors to the console
+};
+
+
+// Handle checkuserV2
+addQuoteV2 = function(msg) {
+  return checkUserV2(msg).then((user) => {
+    var author, channel, parsedAuthor, parsedQuote, submitter;
+    // Now user is a real, populated user.  Create the quote and add it in
+    parsedQuote = msg.content.match("\"[^\"]*\"{0,1}"); // parses anything between first two quotation marks
+    parsedAuthor = msg.content.match("(?<=-)[^-].*"); // parses anything after a dash, excludes any new lines
+
+    if(parsedQuote === null || parsedAuthor === null)
+    {
+         console.log("\tImproper format, quote could not be added.");
+         msg.reply("Sorry! I am unable to add your quote.  Please make sure to use the !add \"Quote\" -Author format!");
+         return false;
+    }
+
+    channel = msg.channel.name;
+    // Get users
+    submitter = checkUserV2(msg.member.user.id);
+    author = checkUserV2(parsedAuthor);
+
+    // Wait for users to return
+    return Promise.all([submitter, author]).then((users) => {
+      var atr, quote, sbmtr;
+      sbmtr = users[0];
+      atr = users[1];
+      return quote = Quote.create({
+        quote: parsedQuote,
+        channel: channel,
+        author: atr,
+        submitter: sbmtr
+      }).then((qt) => {
+        return console.log(`Created quote ${qt.quote} by author ${author.name} submitted by ${sbmtr.name}`);
+      }).catch(console.error);
+    }).catch(console.error);
+  }).catch(console.error);
 };
