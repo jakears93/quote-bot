@@ -203,7 +203,7 @@ checkUserV2 = function(name) {
   var user;
   // Query is a promise, so handle result in then
   return user = User.findOne({
-    name: name
+    where: {name: name}
   }).then((usr) => {
     if (usr === null) {
       // Create is a promise, so define the ultimate return value, and return a Promise for that value
@@ -237,6 +237,8 @@ addQuoteV2 = function(msg) {
 
     parsedQuote = quoteMatch[0];
     parsedAuthor = authorMatch[0];
+
+    console.log(`Submiter ${msg.member.user.id} Author: ${parsedAuthor}`)
 
     channel = msg.channel.name;
     // Get users

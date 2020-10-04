@@ -40,7 +40,9 @@ sequelize.sync()
 # Helper functions
 checkUserV2 = (name) ->
   # Query is a promise, so handle result in then
-  user = User.findOne({name: name}).then((usr) =>
+  user = User.findOne({
+    where: {name: name}
+  }).then((usr) =>
     if(usr == null)
       # Create is a promise, so define the ultimate return value, and return a Promise for that value
       return User.create({name: name}).then((new_usr) =>
