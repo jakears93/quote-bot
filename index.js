@@ -31,25 +31,26 @@ bot.on('ready', () => {
 
 //Wait for message triggers
 bot.on('message', msg => {
-     var parsedMsg = parseCommand(msg.content);
-     var command = parsedMsg[0];
+     var command = parseCommand(msg.content)[0];
+     switch(command){
+          case "!add":
+               console.log("Current Command: "+command);
+               if(checkUser(msg))
+               {
+                    addQuote(msg);
+               }
+               break;
 
-// TODO: Switch to switch statement
-  	if (command === '!quote') {
-          console.log("Current Command: "+command);
-		quote = generateRandomQuote();
-    		msg.reply(quote);
-  	}
-	else if (command === '!help') {
-          console.log("Current Command: "+command);
-		msg.channel.send(usage());
-	}
-     else if (command === '!add') {
-          console.log("Current Command: "+command);
-          if(checkUser(msg))
-          {
-               addQuote(msg);
-          }
+          case "!quote":
+               console.log("Current Command: "+command);
+               quote = generateRandomQuote();
+               msg.reply(quote);
+               break;
+
+          case "!help":
+               console.log("Current Command: "+command);
+               msg.channel.send(usage());
+               break;
      }
 });
 
