@@ -223,17 +223,20 @@ checkUserV2 = function(name) {
 // Handle checkuserV2
 addQuoteV2 = function(msg) {
   return checkUserV2(msg).then((user) => {
-    var author, channel, parsedAuthor, parsedQuote, submitter;
+    var author, channel, quoteMatch, authorMatch, parsedAuthor, parsedQuote, submitter;
     // Now user is a real, populated user.  Create the quote and add it in
-    parsedQuote = msg.content.match("\"[^\"]*\"{0,1}"); // parses anything between first two quotation marks
-    parsedAuthor = msg.content.match("(?<=-)[^-].*"); // parses anything after a dash, excludes any new lines
+    quoteMatch = msg.content.match("\"[^\"]*\"{0,1}"); // parses anything between first two quotation marks
+    authorMatch = msg.content.match("(?<=-)[^-].*"); // parses anything after a dash, excludes any new lines
 
-    if(parsedQuote === null || parsedAuthor === null)
+    if(quoteMatch === null || authorMatch === null)
     {
          console.log("\tImproper format, quote could not be added.");
          msg.reply("Sorry! I am unable to add your quote.  Please make sure to use the !add \"Quote\" -Author format!");
          return false;
     }
+
+    parsedQuote = quoteMatch[0];
+    parsedAuthor = authorMatch[0];
 
     channel = msg.channel.name;
     // Get users
