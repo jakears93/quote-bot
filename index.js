@@ -2,7 +2,7 @@
 require('dotenv').config();
 
 // Database stuff
-databse = require('./lib/database')
+database = require('./lib/database')
 User = database.userModel;
 Quote = database.quoteModel;
 
