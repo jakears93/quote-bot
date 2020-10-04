@@ -69,7 +69,7 @@ addQuoteV2 = (msg) ->
       sbmtr = users[0]
       atr = users[1]
 
-      quote = Quote.create({quote: parsedQuote, channel: channel, author: atr, submitter: sbmtr}).then((qt) =>
+      quote = Quote.create({quote: parsedQuote, channel: channel, authorId: atr.id, submitterId: sbmtr.id}).then((qt) =>
         console.log("Created quote #{qt.quote} by author #{author.name} submitted by #{sbmtr.name}")
       ).catch(console.error)
     ).catch(console.error)

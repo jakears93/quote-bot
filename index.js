@@ -251,8 +251,8 @@ addQuoteV2 = function(msg) {
       return quote = Quote.create({
         quote: parsedQuote,
         channel: channel,
-        author: atr,
-        submitter: sbmtr
+        authorId: atr.id,
+        submitterId: sbmtr.id
       }).then((qt) => {
         return console.log(`Created quote ${qt.quote} by author ${author.name} submitted by ${sbmtr.name}`);
       }).catch(console.error);
