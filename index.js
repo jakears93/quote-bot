@@ -254,7 +254,10 @@ addQuoteV2 = function(msg) {
         authorId: atr.id,
         submitterId: sbmtr.id
       }).then((qt) => {
-        return console.log(`Created quote ${qt.quote} by author ${author.name} submitted by ${sbmtr.name}`);
+        var str;
+        str = `Created quote ${qt.quote} by author ${atr.name} submitted by ${sbmtr.name}`;
+        msg.reply(str);
+        return console.log(str);
       }).catch(console.error);
     }).catch(console.error);
   }).catch(console.error);
