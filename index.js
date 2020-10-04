@@ -13,6 +13,7 @@ bot.on('ready', () => {
   	console.log(`Logged in as ${bot.user.tag}!`);
 });
 
+// Redeploy...
 
 //Wait for message triggers
 bot.on('message', msg => {
